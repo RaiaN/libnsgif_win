@@ -9,7 +9,7 @@ This library aims to provide a simple API for robust decoding of GIF files.
 
 Compilation on Windows (from RaiaN)
 -------
-In order to compile LibNSGIF the old Makefile has been rewritten (via ChatGPT as I don't have time to learn Makefile voodoo - we live in 2023, come on!)
+In order to compile LibNSGIF the old Makefile has been rewritten (via ChatGPT ...as I don't have time to learn Makefile voodoo - we live in 2023, come on!)
 
 1) Install `chocolatey`
 2) Install make: `choco install make`

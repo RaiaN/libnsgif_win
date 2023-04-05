@@ -7,7 +7,7 @@ It is licenced under the MIT licence.
 This library aims to provide a simple API for robust decoding of GIF files.
 
 
-Compilation on Windows (from @RaiaN)
+Compilation on Windows (from RaiaN)
 -------
 In order to compile LibNSGIF the old Makefile has been rewritten (via ChatGPT as I don't have time to learn Makefile voodoo - we live in 2023, come on!)
 

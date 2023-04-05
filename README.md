@@ -13,7 +13,7 @@ In order to compile LibNSGIF the old Makefile has been rewritten (via ChatGPT ..
 
 1) Install `chocolatey`
 2) Install make: `choco install make`
-3) Install MinGW `choco install mingw`
+3) Install MinGW: `choco install mingw`
 4) Run `make`
 
 Compiled libraries can be found in `build` directory.

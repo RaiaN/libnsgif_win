@@ -2,25 +2,39 @@
 # gcc compiler
 
 CC = gcc
-CFLAGS = -Iinclude -arch x86_64 -arch arm64
+CFLAGS = -Iinclude
 AR = ar
 SRC = $(wildcard src/*.c)
-OBJ = $(SRC:.c=.o)
+OBJ = $(addprefix $(BUILD_DIR)/,$(notdir $(SRC:.c=.o)))
 BUILD_DIR = build
-STATIC_LIB = $(BUILD_DIR)/libnsgif.a # Updated library name and extension
+STATIC_LIB = $(BUILD_DIR)/libnsgif.a
+
+# Determine the host architecture
+HOST_ARCH = $(shell uname -m)
+
+# Define target architectures for universal binary
+TARGET_ARCH = x86_64 arm64
+
+# Determine the supported architectures based on the host
+ifeq ($(HOST_ARCH),x86_64)
+    SUPPORTED_ARCH = x86_64 arm64
+else
+    SUPPORTED_ARCH = arm64 x86_64
+endif
 
 all: $(BUILD_DIR) $(STATIC_LIB)
 
 $(BUILD_DIR):
-	mkdir -p $(BUILD_DIR) # Using -p flag to avoid errors if directory already exists
+	mkdir -p $(BUILD_DIR)
 
 $(STATIC_LIB): $(OBJ)
-	$(AR) rcs $@ $^
+	lipo -create $(foreach arch,$(SUPPORTED_ARCH),$(BUILD_DIR)/$(arch)/$(notdir $@)) -output $@
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.o: src/%.c
+	mkdir -p $(dir $@)
+	$(foreach arch,$(TARGET_ARCH),$(CC) $(CFLAGS) -arch $(arch) -c $< -o $(BUILD_DIR)/$(arch)/$(notdir $@);)
 
 clean:
-	rm -f *.o $(BUILD_DIR)/*.a
+	rm -rf $(BUILD_DIR)
 
 .PHONY: all clean

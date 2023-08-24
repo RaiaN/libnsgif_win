@@ -2,7 +2,7 @@
 # gcc compiler
 
 CC = gcc
-CFLAGS = -Iinclude -arch x86_64
+CFLAGS = -Iinclude -arch x86_64 -arch arm64
 AR = ar
 SRC = $(wildcard src/*.c)
 OBJ = $(SRC:.c=.o)

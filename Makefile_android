@@ -1,0 +1,30 @@
+NDK=~/android-ndk-r22b
+TOOLCHAIN=$(NDK)/toolchains/llvm/prebuilt/linux-x86_64
+API=26
+
+CC=$(TOOLCHAIN)/bin/x86_64-linux-android$(API)-clang
+CXX=$(TOOLCHAIN)/bin/x86_64-linux-android$(API)-clang++
+
+
+CFLAGS = -Iinclude -DANDROID
+AR = $(TOOLCHAIN)/bin/x86_64-linux-android-ar
+SRC = $(wildcard src/*.c)
+OBJ = $(SRC:.c=.o)
+BUILD_DIR = build
+STATIC_LIB = $(BUILD_DIR)/libnsgif.a
+
+all: $(BUILD_DIR) $(STATIC_LIB)
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(STATIC_LIB): $(OBJ)
+	$(AR) rcs $@ $^
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f *.o $(BUILD_DIR)/*.a
+
+.PHONY: all clean

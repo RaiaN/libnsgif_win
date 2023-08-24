@@ -3,36 +3,33 @@
 
 CC = gcc
 CFLAGS = -Iinclude
-AR = ar
 SRC = $(wildcard src/*.c)
-OBJ = $(addprefix $(BUILD_DIR)/,$(notdir $(SRC:.c=.o)))
 BUILD_DIR = build
-STATIC_LIB = $(BUILD_DIR)/libnsgif.a
+STATIC_LIB_X86_64 = $(BUILD_DIR)/libnsgif_x86_64.a
+STATIC_LIB_ARM64 = $(BUILD_DIR)/libnsgif_arm64.a
+STATIC_LIB_UNIVERSAL = $(BUILD_DIR)/libnsgif.a
 
-# Determine the host architecture
-HOST_ARCH = $(shell uname -m)
-
-# Define target architectures for universal binary
-TARGET_ARCH = x86_64 arm64
-
-# Determine the supported architectures based on the host
-ifeq ($(HOST_ARCH),x86_64)
-    SUPPORTED_ARCH = x86_64 arm64
-else
-    SUPPORTED_ARCH = arm64 x86_64
-endif
-
-all: $(BUILD_DIR) $(STATIC_LIB)
+all: $(BUILD_DIR) $(STATIC_LIB_UNIVERSAL)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-$(STATIC_LIB): $(OBJ)
-	lipo -create $(foreach arch,$(SUPPORTED_ARCH),$(BUILD_DIR)/$(arch)/$(notdir $@)) -output $@
+$(STATIC_LIB_X86_64): $(addprefix $(BUILD_DIR)/x86_64/,$(notdir $(SRC:.c=.o)))
+	$(AR) rcs $@ $^
 
-$(BUILD_DIR)/%.o: src/%.c
+$(STATIC_LIB_ARM64): $(addprefix $(BUILD_DIR)/arm64/,$(notdir $(SRC:.c=.o)))
+	$(AR) rcs $@ $^
+
+$(STATIC_LIB_UNIVERSAL): $(STATIC_LIB_X86_64) $(STATIC_LIB_ARM64)
+	lipo -create $(STATIC_LIB_X86_64) $(STATIC_LIB_ARM64) -output $@
+
+$(BUILD_DIR)/x86_64/%.o: src/%.c
 	mkdir -p $(dir $@)
-	$(foreach arch,$(TARGET_ARCH),$(CC) $(CFLAGS) -arch $(arch) -c $< -o $(BUILD_DIR)/$(arch)/$(notdir $@);)
+	$(CC) $(CFLAGS) -arch x86_64 -c $< -o $@
+
+$(BUILD_DIR)/arm64/%.o: src/%.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -arch arm64 -c $< -o $@
 
 clean:
 	rm -rf $(BUILD_DIR)

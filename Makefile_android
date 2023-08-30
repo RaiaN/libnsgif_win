@@ -2,12 +2,12 @@ NDK=~/android-ndk-r22b
 TOOLCHAIN=$(NDK)/toolchains/llvm/prebuilt/linux-x86_64
 API=26
 
-CC=$(TOOLCHAIN)/bin/x86_64-linux-android$(API)-clang
-CXX=$(TOOLCHAIN)/bin/x86_64-linux-android$(API)-clang++
+CC = $(TOOLCHAIN)/bin/aarch64-linux-android$(API)-clang
+CXX = $(TOOLCHAIN)/bin/aarch64-linux-android$(API)-clang++
 
 
-CFLAGS = -Iinclude -DANDROID
-AR = $(TOOLCHAIN)/bin/x86_64-linux-android-ar
+CFLAGS = -Iinclude -DANDROID 
+AR = $(TOOLCHAIN)/bin/aarch64-linux-android-ar
 SRC = $(wildcard src/*.c)
 OBJ = $(SRC:.c=.o)
 BUILD_DIR = build
@@ -25,6 +25,6 @@ $(STATIC_LIB): $(OBJ)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o $(BUILD_DIR)/*.a
+	rm -rf src/*.o $(BUILD_DIR)
 
 .PHONY: all clean

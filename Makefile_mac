@@ -3,6 +3,7 @@
 
 CC = gcc
 CFLAGS = -Iinclude
+CXXFLAGS = -mmacosx-version-min=10.15
 SRC = $(wildcard src/*.c)
 BUILD_DIR = build
 STATIC_LIB_X86_64 = $(BUILD_DIR)/libnsgif_x86_64.a
@@ -25,13 +26,14 @@ $(STATIC_LIB_UNIVERSAL): $(STATIC_LIB_X86_64) $(STATIC_LIB_ARM64)
 
 $(BUILD_DIR)/x86_64/%.o: src/%.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -arch x86_64 -c $< -o $@
+	$(CC) $(CFLAGS) $(CXXFLAGS) -arch x86_64 -c $< -o $@
 
 $(BUILD_DIR)/arm64/%.o: src/%.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -arch arm64 -c $< -o $@
+	$(CC) $(CFLAGS) $(CXXFLAGS) -arch arm64 -c $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) 
+	rm -rf src/*.o
 
 .PHONY: all clean
